@@ -1,0 +1,58 @@
+unit CentralDM;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, ZDataset, Data.DB, ZAbstractRODataset,
+  ZAbstractDataset, ZAbstractConnection, ZConnection;
+
+type
+  TDM = class(TDataModule)
+    MainConn: TZConnection;
+    ListQ: TZQuery;
+    TempQ: TZReadOnlyQuery;
+  private
+    { Private-Deklarationen }
+    procedure ReloadPortList(const Device: String = '');
+  public
+    { Public-Deklarationen }
+  end;
+
+var
+  DM: TDM;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+uses IksZeosHelper;
+
+procedure TDM.ReloadPortList(const Device: String = '');
+begin
+  ListQ.DisableControls;
+  try
+    ListQ.Close;
+    ListQ.Fields.Clear;
+    ListQ.FieldDefs.Clear;
+    if Device <> '' then begin
+      ListQ.SQL.Text := 'select ID, TYPE, NAME, COMMENT, ROOM, USEDBY from PATCHPORTS where DEVICE = :DEVICE order by ORDERNR';
+      ListQ.ParamByName('DEVICE').AsString := Device;
+    end;
+    AddCalculatedField(ListQ, 'ROOM_D', 50);
+    AddCalculatedField(ListQ, 'USEDBY_D', 50);
+    AddCalculatedField(ListQ, 'PatchPartner', 50);
+    ListQ.Open;
+    ListQ.FieldByName('ID').Visible := False;
+    ListQ.FieldByName('TYPE').Visible := False;
+    ListQ.FieldByName('ROOM').Visible := False;
+    LISTQ.FieldByName('USEDBY').Visible := False;
+    ListQ.FieldByName('ROOM_D').DisplayWidth := 10;
+    ListQ.FieldByName('USEDBY_D').DisplayWidth := 25;
+  finally
+    ListQ.EnableControls;
+  end;
+end;
+
+end.

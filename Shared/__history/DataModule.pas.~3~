@@ -1,0 +1,29 @@
+unit DataModule;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, ZDataset, Data.DB, ZAbstractRODataset,
+  ZAbstractDataset, ZAbstractConnection, ZConnection;
+
+type
+  TDM = class(TDataModule)
+    MainConn: TZConnection;
+    ListQ: TZQuery;
+    TempQ: TZReadOnlyQuery;
+  private
+    { Private-Deklarationen }
+  public
+    { Public-Deklarationen }
+  end;
+
+var
+  DM: TDM;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+end.
